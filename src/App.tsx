@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import DashboardPage from './pages/DashboardPage.tsx';
 import BoardPage from './pages/BoardPage.tsx';
+import NativePage from './pages/NativePage.tsx';
 
 export default function App() {
   return (
@@ -24,6 +25,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <BoardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/native"
+            element={
+              <ProtectedRoute>
+                <NativePage />
               </ProtectedRoute>
             }
           />
