@@ -59,7 +59,16 @@ export default function ProfilePage() {
       </div>
 
       {/* 메뉴 */}
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden divide-y divide-gray-100">
+        {(profile?.role === 'ADMIN' || user?.role === 'ADMIN') && (
+          <button
+            onClick={() => navigate('/admin')}
+            className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+          >
+            <span className="text-sm text-gray-900 font-medium">관리자</span>
+            <span className="text-gray-300 text-lg">›</span>
+          </button>
+        )}
         <button
           onClick={() => navigate('/native')}
           className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 active:bg-gray-100 transition-colors"

@@ -7,6 +7,9 @@ import BoardPage from './pages/BoardPage.tsx';
 import NativePage from './pages/NativePage.tsx';
 import PostDetailPage from './pages/PostDetailPage.tsx';
 import ProfilePage from './pages/ProfilePage.tsx';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage.tsx';
+import AdminUsersPage from './pages/admin/AdminUsersPage.tsx';
+import AdminBoardsPage from './pages/admin/AdminBoardsPage.tsx';
 
 export default function App() {
   return (
@@ -51,6 +54,30 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute>
+                <AdminUsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/boards"
+            element={
+              <ProtectedRoute>
+                <AdminBoardsPage />
               </ProtectedRoute>
             }
           />
