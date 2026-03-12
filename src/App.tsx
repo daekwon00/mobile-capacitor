@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage.tsx';
 import DashboardPage from './pages/DashboardPage.tsx';
 import BoardPage from './pages/BoardPage.tsx';
 import NativePage from './pages/NativePage.tsx';
+import PostDetailPage from './pages/PostDetailPage.tsx';
+import ProfilePage from './pages/ProfilePage.tsx';
 
 export default function App() {
   return (
@@ -29,10 +31,26 @@ export default function App() {
             }
           />
           <Route
+            path="/posts/:postId"
+            element={
+              <ProtectedRoute>
+                <PostDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/native"
             element={
               <ProtectedRoute>
                 <NativePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

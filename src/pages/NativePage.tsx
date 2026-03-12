@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { Device } from '@capacitor/device';
 import { Share } from '@capacitor/share';
+import AppLayout from '../components/AppLayout.tsx';
 
 interface PluginResult {
   label: string;
@@ -13,7 +13,6 @@ interface PluginResult {
 }
 
 export default function NativePage() {
-  const navigate = useNavigate();
   const [results, setResults] = useState<PluginResult[]>([]);
   const [photo, setPhoto] = useState<string | null>(null);
 
@@ -85,52 +84,48 @@ export default function NativePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-700">
-          ← 뒤로
-        </button>
+    <AppLayout
+      showBottomNav
+      header={
         <h1 className="text-lg font-bold text-gray-900">네이티브 플러그인</h1>
-      </header>
+      }
+    >
+      {/* 플러그인 버튼 그리드 */}
+      <div className="grid grid-cols-2 gap-3">
+        <PluginButton label="📷 카메라" sub="사진 촬영/선택" onClick={handleCamera} />
+        <PluginButton label="📍 위치" sub="현재 좌표 조회" onClick={handleGeolocation} />
+        <PluginButton label="📳 진동" sub="햅틱 피드백" onClick={handleHaptics} />
+        <PluginButton label="📱 기기 정보" sub="모델/OS/배터리" onClick={handleDevice} />
+        <PluginButton label="🔗 공유" sub="공유 시트 열기" onClick={handleShare} />
+      </div>
 
-      <main className="p-4 space-y-4">
-        {/* 플러그인 버튼 그리드 */}
-        <div className="grid grid-cols-2 gap-3">
-          <PluginButton label="📷 카메라" sub="사진 촬영/선택" onClick={handleCamera} />
-          <PluginButton label="📍 위치" sub="현재 좌표 조회" onClick={handleGeolocation} />
-          <PluginButton label="📳 진동" sub="햅틱 피드백" onClick={handleHaptics} />
-          <PluginButton label="📱 기기 정보" sub="모델/OS/배터리" onClick={handleDevice} />
-          <PluginButton label="🔗 공유" sub="공유 시트 열기" onClick={handleShare} />
+      {/* 촬영 사진 미리보기 */}
+      {photo && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-3">
+          <img src={photo} alt="촬영 사진" className="w-full rounded-xl" />
         </div>
+      )}
 
-        {/* 촬영 사진 미리보기 */}
-        {photo && (
-          <div className="bg-white rounded-2xl border border-gray-200 p-3">
-            <img src={photo} alt="촬영 사진" className="w-full rounded-xl" />
-          </div>
-        )}
-
-        {/* 결과 로그 */}
-        {results.length > 0 && (
-          <div className="space-y-2">
-            <h2 className="text-sm font-medium text-gray-500">실행 결과</h2>
-            {results.map((r, i) => (
-              <div
-                key={i}
-                className={`rounded-xl border p-3 text-sm ${
-                  r.error
-                    ? 'bg-red-50 border-red-200 text-red-700'
-                    : 'bg-white border-gray-200 text-gray-700'
-                }`}
-              >
-                <span className="font-medium">{r.label}</span>
-                <p className="mt-0.5 text-xs break-all">{r.data}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </main>
-    </div>
+      {/* 결과 로그 */}
+      {results.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-gray-500">실행 결과</h2>
+          {results.map((r, i) => (
+            <div
+              key={i}
+              className={`rounded-xl border p-3 text-sm ${
+                r.error
+                  ? 'bg-red-50 border-red-200 text-red-700'
+                  : 'bg-white border-gray-200 text-gray-700'
+              }`}
+            >
+              <span className="font-medium">{r.label}</span>
+              <p className="mt-0.5 text-xs break-all">{r.data}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </AppLayout>
   );
 }
 

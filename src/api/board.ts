@@ -18,9 +18,8 @@ export interface PageResponse<T> {
 }
 
 interface ApiResponse<T> {
-  status: string;
+  success: boolean;
   data: T;
-  message?: string;
 }
 
 export interface Board {

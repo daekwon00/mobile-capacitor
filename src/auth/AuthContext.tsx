@@ -1,10 +1,13 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { login as apiLogin, logout as apiLogout, type LoginRequest } from '../api/auth.ts';
+import { login as apiLogin, logout as apiLogout, type LoginRequest, type UserInfo } from '../api/auth.ts';
 import { getAccessToken, setTokens, clearTokens } from '../api/token.ts';
+import { Preferences } from '@capacitor/preferences';
+
+const USER_INFO_KEY = 'user_info';
 
 interface AuthState {
   isAuthenticated: boolean;
-  username: string | null;
+  user: UserInfo | null;
   loading: boolean;
 }
 
@@ -15,18 +18,27 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+async function saveUserInfo(user: UserInfo) {
+  await Preferences.set({ key: USER_INFO_KEY, value: JSON.stringify(user) });
+}
+
+async function loadUserInfo(): Promise<UserInfo | null> {
+  const { value } = await Preferences.get({ key: USER_INFO_KEY });
+  return value ? JSON.parse(value) : null;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({
     isAuthenticated: false,
-    username: null,
+    user: null,
     loading: true,
   });
 
   useEffect(() => {
-    getAccessToken().then((token) => {
+    Promise.all([getAccessToken(), loadUserInfo()]).then(([token, user]) => {
       setState({
         isAuthenticated: !!token,
-        username: null,
+        user,
         loading: false,
       });
     });
@@ -35,7 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (request: LoginRequest) => {
     const data = await apiLogin(request);
     await setTokens(data.accessToken, data.refreshToken);
-    setState({ isAuthenticated: true, username: data.username, loading: false });
+    await saveUserInfo(data.user);
+    setState({ isAuthenticated: true, user: data.user, loading: false });
   }, []);
 
   const logout = useCallback(async () => {
@@ -45,7 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // 서버 에러 무시 — 토큰만 정리
     }
     await clearTokens();
-    setState({ isAuthenticated: false, username: null, loading: false });
+    await Preferences.remove({ key: USER_INFO_KEY });
+    setState({ isAuthenticated: false, user: null, loading: false });
   }, []);
 
   return (
